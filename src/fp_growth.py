@@ -163,7 +163,7 @@ class Tree:
     """
 
     def __init__(self):
-        self.root = Node(item='root')
+        self.root = Node()
 
     def show(self):
         print('-' * 20, 'fp tree', '-' * 20)
