@@ -15,7 +15,6 @@ class FpGrowth:
         self.item_header_table = ItemHeaderTable()
         self.tree = Tree()
         self.conditional_pattern_bases = {}
-        self.frequent_item_sets = []
 
     def build(self, item_sets):
         """
@@ -133,9 +132,10 @@ class ItemHeaderTable:
         self._table = {}
 
     def show(self):
-        print('-' * 20, 'item header table', '-' * 20)
+        print('-' * 20, 'item header table begin', '-' * 20)
         for _, value in self._table.items():
             print(value)
+        print('-' * 20, 'item header table end', '-' * 20)
 
     def get_table(self):
         """
@@ -223,8 +223,9 @@ class Tree:
         self.root = Node()
 
     def show(self):
-        print('-' * 20, 'fp tree', '-' * 20)
+        print('-' * 20, 'fp tree begin', '-' * 20)
         self.root.show()
+        print('-' * 20, 'fp tree end', '-' * 20)
 
     @staticmethod
     def add_item_set(root, item_set):
