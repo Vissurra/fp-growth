@@ -84,7 +84,7 @@ class ItemHeaderTable:
         return table as a list
         :return: table list
         """
-        return [value for _, value in self._table]
+        return [value for _, value in self._table.items()]
 
     def add(self, item, frequency):
         """
