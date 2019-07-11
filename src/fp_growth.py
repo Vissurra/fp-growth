@@ -59,8 +59,9 @@ class FpGrowth:
         :param item_sets: item set list
         """
         for item_set in item_sets:
-            tail = Tree.add_item_set(root=self.tree.root, item_set=item_set)
-            self.item_header_table.add_item_header_pointer(tail)
+            new_nodes = Tree.add_item_set(root=self.tree.root, item_set=item_set)
+            for new_node in new_nodes:
+                self.item_header_table.add_item_header_pointer(new_node)
 
 
 class ItemHeaderTable:
@@ -171,10 +172,9 @@ class Tree:
     @staticmethod
     def add_item_set(root, item_set):
         """
-        add one item set to fp-tree by recursion
+        add one item set to fp-tree by recursion, yield all new nodes
         :param root: root node
         :param item_set: item set need to be added to the root node
-        :return: the tail node
         """
         item = item_set[0]
         for child in root.children:
@@ -188,13 +188,13 @@ class Tree:
             node = Node(item=item, frequency=1, parent=root)
             root.children.append(node)
             next_root = node
+            yield node
 
         if len(item_set) > 1:
             # set the next item in item set
-            return Tree.add_item_set(root=next_root, item_set=item_set[1:])
-        else:
-            # return the last node
-            return next_root
+            new_nodes = Tree.add_item_set(root=next_root, item_set=item_set[1:])
+            for node in new_nodes:
+                yield node
 
 
 class Node:
