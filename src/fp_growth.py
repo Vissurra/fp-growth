@@ -8,9 +8,9 @@ class FpGrowth:
         init
         :param min_support: the min support used to filter
         """
+        self.min_support = min_support
         self.item_header_table = ItemHeaderTable()
         self.tree = Tree()
-        self.min_support = min_support
 
     def build(self, item_sets):
         """
@@ -20,15 +20,15 @@ class FpGrowth:
         # remove the repeats
         item_sets = [list(set(item for item in item_set)) for item_set in item_sets]
 
-        self.build_item_header_table(item_sets=item_sets)
+        self._build_item_header_table(item_sets=item_sets)
         self.item_header_table.show()
 
         item_sets = [self.item_header_table.filter_and_sort_item_set(item_set) for item_set in item_sets]
 
-        self.build_tree(item_sets=item_sets)
+        self._build_tree(item_sets=item_sets)
         self.tree.show()
 
-    def build_item_header_table(self, item_sets):
+    def _build_item_header_table(self, item_sets):
         """
         build item header table
         :param item_sets: the item set list
@@ -53,7 +53,7 @@ class FpGrowth:
         for key, value in sorted_items:
             self.item_header_table.add(item=key, frequency=value)
 
-    def build_tree(self, item_sets):
+    def _build_tree(self, item_sets):
         """
         build fp-tree
         :param item_sets: item set list
@@ -62,6 +62,30 @@ class FpGrowth:
             new_nodes = Tree.add_item_set(root=self.tree.root, item_set=item_set)
             for new_node in new_nodes:
                 self.item_header_table.add_item_header_pointer(new_node)
+
+    def get_conditional_pattern_base(self):
+        """
+        get conditional pattern base
+        :return: dict, key is item, value is conditional pattern base stored in list
+        """
+        bases = {}
+        for item_header in reversed(self.item_header_table.get_table()):
+            base = {}
+            for pointer in item_header.pointers:
+                head = pointer
+                tail = head.parent
+                while tail.item is not None:
+                    item = tail.item
+                    base[item] = (base[item] + head.frequency) if item in base else head.frequency
+                    tail = tail.parent
+            # filter low frequency candidates
+            items = [key for key in base.keys()]
+            for item in items:
+                if base[item] < self.min_support:
+                    base.pop(item)
+            if len(base) > 0:
+                bases[item_header.item] = list(base.keys())
+        return bases
 
 
 class ItemHeaderTable:
