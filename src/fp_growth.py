@@ -1,3 +1,6 @@
+from itertools import combinations
+
+
 class FpGrowth:
     """
     fp-growth algorithm
@@ -11,6 +14,8 @@ class FpGrowth:
         self.min_support = min_support
         self.item_header_table = ItemHeaderTable()
         self.tree = Tree()
+        self.conditional_pattern_bases = {}
+        self.frequent_item_sets = []
 
     def build(self, item_sets):
         """
@@ -27,6 +32,20 @@ class FpGrowth:
 
         self._build_tree(item_sets=item_sets)
         self.tree.show()
+
+        self._build_conditional_pattern_bases()
+
+    def find_frequency_item_sets(self, min_item_count=2):
+        """
+        find all frequent item sets
+        :param min_item_count: min item count of item set
+        :return: frequent item set list
+        """
+        result = []
+        for item, conditional_pattern_base in self.conditional_pattern_bases.items():
+            frequent_item_sets = FpGrowth._find_frequent_item_sets(item, conditional_pattern_base, min_item_count)
+            result += frequent_item_sets
+        return result
 
     def _build_item_header_table(self, item_sets):
         """
@@ -63,12 +82,10 @@ class FpGrowth:
             for new_node in new_nodes:
                 self.item_header_table.add_item_header_pointer(new_node)
 
-    def get_conditional_pattern_base(self):
+    def _build_conditional_pattern_bases(self):
         """
-        get conditional pattern base
-        :return: dict, key is item, value is conditional pattern base stored in list
+        set conditional pattern base, key is item, value is conditional pattern base stored in list
         """
-        bases = {}
         for item_header in reversed(self.item_header_table.get_table()):
             base = {}
             for pointer in item_header.pointers:
@@ -84,8 +101,24 @@ class FpGrowth:
                 if base[item] < self.min_support:
                     base.pop(item)
             if len(base) > 0:
-                bases[item_header.item] = list(base.keys())
-        return bases
+                self.conditional_pattern_bases[item_header.item] = list(base.keys())
+
+    @staticmethod
+    def _find_frequent_item_sets(item, base, min_item_count):
+        """
+        find frequent item sets
+        :param item: item
+        :param base: conditional pattern base
+        :param min_item_count: the min item count of frequent item set
+        :return: frequent item set list
+        """
+        all_frequent_item_sets = []
+        # i is the count of items which to be combined with item
+        for i in range(1, len(base) + 1):
+            item_sets = [item_set for item_set in combinations(base, i) if len(item_set) >= min_item_count - 1]
+            for item_set in item_sets:
+                all_frequent_item_sets.append([item] + list(item_set))
+        return all_frequent_item_sets
 
 
 class ItemHeaderTable:

@@ -12,7 +12,15 @@ if __name__ == '__main__':
         [2, 7],
         [2, 7],
         [2, 8],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 1],
     ]
 
     fp = FpGrowth(min_support=3)
     fp.build(item_sets=item_sets)
+    frequent_item_sets = fp.find_frequency_item_sets()
+    for item_set in frequent_item_sets:
+        print(item_set)
