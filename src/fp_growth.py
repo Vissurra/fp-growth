@@ -179,13 +179,13 @@ class Tree:
         item = item_set[0]
         for child in root.children:
             if item == child.item:
-                # item exists, item count plus 1
-                child.count += 1
+                # item exists, item frequency plus 1
+                child.frequency += 1
                 next_root = child
                 break
         else:
             # item not exist, create a node
-            node = Node(item=item, count=1, parent=root)
+            node = Node(item=item, frequency=1, parent=root)
             root.children.append(node)
             next_root = node
 
@@ -202,22 +202,22 @@ class Node:
     fp-tree node
     """
 
-    def __init__(self, item=None, count=0, parent=None):
+    def __init__(self, item=None, frequency=0, parent=None):
         """
         init
         :param item: item
-        :param count: count
+        :param frequency: the count of node been achieved
         :param parent: parent node
         """
         self.item = item
-        self.count = count
+        self.frequency = frequency
         self.parent = parent
         self.children = []
 
     def show(self, indent=0):
-        print('{}[{}, {}]'.format('  ' * indent, self.item, self.count))
+        print('{}[{}, {}]'.format('  ' * indent, self.item, self.frequency))
         for child in self.children:
             child.show(indent=indent + 1)
 
     def __str__(self):
-        return 'Node[{}, {}]'.format(self.item, self.count)
+        return 'Node[{}, {}]'.format(self.item, self.frequency)
