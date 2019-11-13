@@ -155,7 +155,7 @@ class ItemHeaderTable:
     def add_item_header_pointer(self, pointer):
         """
         add a node to item header, raise ValueError if item not in table
-        :param pointer: the tail node of fp-tree
+        :param pointer: the node of fp-tree
         """
         if pointer.item not in self._table:
             raise ValueError('item header table can not find the item: {}'.format(pointer))
@@ -206,7 +206,7 @@ class ItemHeader:
     def add_pointer(self, pointer):
         """
         add a node
-        :param pointer: tail node of fp-tree
+        :param pointer: node of fp-tree
         """
         self.pointers.add(pointer)
 
